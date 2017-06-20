@@ -11,6 +11,7 @@ var fs = require("fs"),
     PiCamera = require('./camera.js'),
     program = require('commander'),
     pjson = require('./package.json');
+    v4l2camera = require("v4l2camera");
 
 program
   .version(pjson.version)
@@ -142,10 +143,10 @@ watcher.on('change', function(file) {
 });
 
 // setup the camera 
-var camera = new PiCamera();
+var finderscope = new PiCamera();
 
 // start image capture
-camera
+finderscope
     .nopreview()
     .baseFolder(tmpFolder)
     .thumb('0:0:0') // dont include thumbnail version
@@ -155,3 +156,17 @@ camera
     .height(height)
     .quality(quality)
     .takePicture(tmpImage);
+
+mainscope = new v4l2camera.Camera("/dev/video0");
+
+if (mainscope.configGet().formatName !== "MJPG") {
+	console.log("NOTICE: MJPG camera required");
+	process.exit(1);
+}
+
+mainscope.start();
+mainscope.capture(function (success) {
+  var frame = mainscope.frameRaw();
+  require("fs").createWriteStream("tmpFolder/mainscope.jpg").end(Buffer(frame));
+  mainscope.stop();
+});

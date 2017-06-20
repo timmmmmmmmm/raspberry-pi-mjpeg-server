@@ -32,6 +32,7 @@
     "chokidar": "^1.6.0",
     "commander": "^2.9.0",
     "ip":"^1.1.4",
-    "pubsub-js": "~1.5.2"
+    "pubsub-js": "~1.5.2",
+    "v4l2camera": "^1.0.4"
   }
 }
