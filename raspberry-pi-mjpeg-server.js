@@ -32,7 +32,8 @@ var port = program.port || 8080,
     timeout = program.timeout || 250,
     quality = program.quality || 75,
     tmpFolder = os.tmpdir(),
-    tmpImage = pjson.name + '-image.jpg',
+    tmpImageFinder = 'finder.jpg',
+    tmpImageMain = 'main.jpg',
     localIpAddress = localIp.address(),
     boundaryID = "BOUNDARY";
 
@@ -48,8 +49,16 @@ var server = http.createServer(function(req, res) {
     };
 
     // for image requests, return a HTTP multipart document (stream)
-    if (req.url === "/") {
-		 fs.readFile(tmpFolder + '/' + tmpImage, function(err, data) {
+    if (req.url === "/main.jpg") {
+		 fs.readFile(tmpFolder + '/' + tmpImageMain, function(err, data) {
+			if (err) throw err; // Fail if the file can't be read.
+			res.writeHead(200, {'Content-Type': 'image/jpeg'});
+			res.end(data); // Send the file data to the browser.
+		});
+    }
+
+    if (req.url === "/finder.jpg") {
+		 fs.readFile(tmpFolder + '/' + tmpImageFinder, function(err, data) {
 			if (err) throw err; // Fail if the file can't be read.
 			res.writeHead(200, {'Content-Type': 'image/jpeg'});
 			res.end(data); // Send the file data to the browser.
@@ -74,29 +83,23 @@ console.log(pjson.name + " started on port " + port);
 console.log('Visit http://' + localIpAddress + ':' + port + ' to view your PI camera stream');
 console.log('');
 
-
-var tmpFile = path.resolve(path.join(tmpFolder, tmpImage));
-
-// //setup the camera
-// var finderscope = new PiCamera();
-
-// // start image capture
-// finderscope
-//     .nopreview()
-//     .baseFolder(tmpFolder)
-//     .thumb('0:0:0') // dont include thumbnail version
-//     .timeout(9999999) // never end
-//     .timelapse(timeout) // how often we should capture an image
-//     .width(width)
-//     .height(height)
-//     .quality(quality)
-//     .takePicture(tmpImage);
-
-var mainscope = new WebCamera();
+// start image capture
+var finderscope = new PiCamera();
+finderscope
+    .nopreview()
+    .baseFolder(tmpFolder)
+    .thumb('0:0:0') // dont include thumbnail version
+    .timeout(9999999) // never end
+    .timelapse(timeout) // how often we should capture an image
+    .width(width)
+    .height(height)
+    .quality(quality)
+    .takePicture(tmpImageFinder);
 
 // start image capture
+var mainscope = new WebCamera();
 mainscope
     .baseFolder(tmpFolder)
     .loop(1) // how often we should capture an image
     .resolution(width + "x" + height)
-    .takePicture(tmpImage);
+    .takePicture(tmpImageMain);
