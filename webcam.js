@@ -141,17 +141,7 @@ module.exports = function Camera(){
         
         return this;
         
-    },
-    this.nopreview  = function(value) {
-        
-        if(value===undefined)
-            value="";
-        
-        this.parameters["-n"] = value;
-        
-        return this;
-        
-    },    
+    },  
     this.opacity  = function(value){
         
         this.parameters["-op"] = value;
