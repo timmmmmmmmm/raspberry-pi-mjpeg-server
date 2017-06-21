@@ -9,8 +9,9 @@ var fs = require("fs"),
     PubSub = require("pubsub-js"),
     localIp = require('ip'),
     PiCamera = require('./camera.js'),
+    WebCamera = require('./webcam.js'),
     program = require('commander'),
-    pjson = require('./package.json');
+    pjson = require('./package.json'),
     v4l2camera = require("v4l2camera");
 
 program
@@ -25,7 +26,7 @@ program
   .parse(process.argv);
 
 program.on('--help', function(){
-  console.log("Usage: " + pjson.name + " [OPTION]\n");
+ console.log("Usage: " + pjson.name + " [OPTION]\n");
 });
 
 var port = program.port || 8080,
@@ -63,7 +64,7 @@ var server = http.createServer(function(req, res) {
         return;
     };
 
-    // for image requests, return a HTTP multipart document (stream) 
+    // for image requests, return a HTTP multipart document (stream)
     if (req.url.match(/^\/.+\.jpg$/)) {
 
         res.writeHead(200, {
@@ -142,31 +143,27 @@ watcher.on('change', function(file) {
     });
 });
 
-// setup the camera 
-var finderscope = new PiCamera();
+// //setup the camera
+// var finderscope = new PiCamera();
+
+// // start image capture
+// finderscope
+//     .nopreview()
+//     .baseFolder(tmpFolder)
+//     .thumb('0:0:0') // dont include thumbnail version
+//     .timeout(9999999) // never end
+//     .timelapse(timeout) // how often we should capture an image
+//     .width(width)
+//     .height(height)
+//     .quality(quality)
+//     .takePicture(tmpImage);
+
+var mainscope = new WebCamera();
 
 // start image capture
-finderscope
+mainscope
     .nopreview()
     .baseFolder(tmpFolder)
-    .thumb('0:0:0') // dont include thumbnail version
-    .timeout(9999999) // never end
-    .timelapse(timeout) // how often we should capture an image
-    .width(width)
-    .height(height)
-    .quality(quality)
+    .loop(1) // how often we should capture an image
+    .resolution(width + "x" + height)
     .takePicture(tmpImage);
-
-mainscope = new v4l2camera.Camera("/dev/video0");
-
-if (mainscope.configGet().formatName !== "MJPG") {
-	console.log("NOTICE: MJPG camera required");
-	process.exit(1);
-}
-
-mainscope.start();
-mainscope.capture(function (success) {
-  var frame = mainscope.frameRaw();
-  require("fs").createWriteStream("tmpFolder/mainscope.jpg").end(Buffer(frame));
-  mainscope.stop();
-});
