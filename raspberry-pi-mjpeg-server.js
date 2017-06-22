@@ -64,6 +64,21 @@ var server = http.createServer(function(req, res) {
 			res.end(data); // Send the file data to the browser.
 		});
     }
+
+    if (req.url === "/shutdown") {
+        res.statusCode = 200;
+        console.log("Shutdown called");
+
+        this.command = "sudo shutdown now";
+        var exec = require('child_process').exec,child;
+        child = exec(this.command,function (error, stdout, stderr) {
+            if(callback!==undefined){
+            }
+        });
+
+        res.end();
+        return;
+    };
 });
 
 server.on('error', function(e) {
