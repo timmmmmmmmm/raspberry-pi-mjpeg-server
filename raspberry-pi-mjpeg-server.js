@@ -31,7 +31,8 @@ var port = program.port || 8080,
     height = program.height || 480,
     timeout = program.timeout || 250,
     quality = program.quality || 75,
-    tmpFolder = os.tmpdir(),
+    // tmpFolder = os.tmpdir(),
+    tmpFolder = '/var/tmp',
     tmpImageFinder = 'finder.jpg',
     tmpImageMain = 'main.jpg',
     localIpAddress = localIp.address(),
@@ -111,10 +112,10 @@ finderscope
     .quality(quality)
     .takePicture(tmpImageFinder);
 
-// start image capture
+//start image capture
 var mainscope = new WebCamera();
 mainscope
     .baseFolder(tmpFolder)
-    .loop(1) // how often we should capture an image
+    .loop(5) // how often we should capture an image
     .resolution(width + "x" + height)
     .takePicture(tmpImageMain);

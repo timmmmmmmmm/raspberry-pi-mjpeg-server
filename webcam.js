@@ -4,7 +4,6 @@ module.exports = function Camera(){
 
     this.filename = null;
     this.folder = null;
-    this.command = "raspistill";
     this.parameters= [];
     
     this.takePicture = function takePicture(file,callback){
