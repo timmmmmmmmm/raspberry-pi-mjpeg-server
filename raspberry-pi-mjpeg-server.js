@@ -7,7 +7,7 @@ var fs = require("fs"),
     util = require("util"),
     localIp = require('ip'),
     PiCamera = require('./camera.js'),
-    WebCamera = require('./webcam.js'),
+    // WebCamera = require('./webcam.js'),
     program = require('commander'),
     pjson = require('./package.json');
 
@@ -34,7 +34,7 @@ var port = program.port || 8080,
     // tmpFolder = os.tmpdir(),
     tmpFolder = '/var/tmp',
     tmpImageFinder = 'finder.jpg',
-    tmpImageMain = 'main.jpg',
+    // tmpImageMain = 'main.jpg',
     localIpAddress = localIp.address(),
     boundaryID = "BOUNDARY";
 
@@ -50,13 +50,13 @@ var server = http.createServer(function(req, res) {
     };
 
     // for image requests, return a HTTP multipart document (stream)
-    if (req.url === "/main.jpg") {
-		 fs.readFile(tmpFolder + '/' + tmpImageMain, function(err, data) {
-			if (err) throw err; // Fail if the file can't be read.
-			res.writeHead(200, {'Content-Type': 'image/jpeg'});
-			res.end(data); // Send the file data to the browser.
-		});
-    }
+  //   if (req.url === "/main.jpg") {
+		//  fs.readFile(tmpFolder + '/' + tmpImageMain, function(err, data) {
+		// 	if (err) throw err; // Fail if the file can't be read.
+		// 	res.writeHead(200, {'Content-Type': 'image/jpeg'});
+		// 	res.end(data); // Send the file data to the browser.
+		// });
+  //   }
 
     if (req.url === "/finder.jpg") {
 		 fs.readFile(tmpFolder + '/' + tmpImageFinder, function(err, data) {
@@ -113,9 +113,9 @@ finderscope
     .takePicture(tmpImageFinder);
 
 //start image capture
-var mainscope = new WebCamera();
-mainscope
-    .baseFolder(tmpFolder)
-    .loop(5) // how often we should capture an image
-    .resolution(width + "x" + height)
-    .takePicture(tmpImageMain);
+// var mainscope = new WebCamera();
+// mainscope
+//     .baseFolder(tmpFolder)
+//     .loop(5) // how often we should capture an image
+//     .resolution(width + "x" + height)
+//     .takePicture(tmpImageMain);
